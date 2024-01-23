@@ -1,4 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import  login_required
+
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -167,3 +169,19 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "auctions/register.html")
+    
+
+@login_required
+def chat(request, id):
+    listingData = Listings.objects.get(pk=id)
+    currentUser = request.user
+
+    return render(request, "auctions/chat.html", {
+                "listingData": listingData,
+                "user": currentUser
+            })
+
+
+
+
+

@@ -1,0 +1,86 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}Chat room for "{{ listingData.title }}"{% endblock %}
+{% block body %}
+   <div id="time"></div>
+  <div id="chat"> </div>
+  <div id="chat-input">
+    <input id="chat-message-input" type="text">
+    <input id="chat-message-submit" type="submit" value="Send">
+  </div>
+
+
+{{ listingData.id|json_script:"Listing-id" }}
+{{ request.user.username|json_script:"request-user" }}
+<script>
+    const listingId = JSON.parse(
+        document.getElementById('Listing-id').textContent
+    );
+    const requestUser = JSON.parse(
+        document.getElementById('request-user').textContent
+    );
+        
+
+    const url = 'ws://' + window.location.host + '/ws/chat/' + listingId + '/';
+    const chatSocket = new WebSocket(url)
+
+    chatSocket.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        console.log("Received Data:", data);
+        const chat = document.getElementById('chat');
+        const dateOptions = { hour: 'numeric', minute: 'numeric', hour12: true };
+        const datetime = new Date(data.datetime).toLocaleString('en', dateOptions);
+        const isMe = data.senderUsername === requestUser;  // Use 'senderUsername' instead of 'user'
+        const source = isMe ? 'me' : 'other';
+        const name = isMe ? 'Me' : data.senderUsername;
+
+        chat.innerHTML += '<div class="message ' + source + '">' +
+            '<strong>' + name + '</strong> ' +
+            '<span class="date">' + datetime + '</span><br>' +
+            data.message + '</div>';
+        chat.scrollTop = chat.scrollHeight;
+    };
+
+
+    const input = document.getElementById('chat-message-input');
+    const submitButton = document.getElementById('chat-message-submit');
+
+    submitButton.addEventListener('click', function(event) {
+        const message = input.value;
+        console.log(message)
+
+        if (message) {
+            // send message in JSON format
+            chatSocket.send(JSON.stringify({
+            'message': message,
+            'SenderUsername': requestUser,
+        }));
+           
+            input.value = '';  // Use input.value to clear the input field
+            input.focus();
+        }
+        console.log("message is being sent")
+        console.log(message)
+
+    });
+
+    input.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            submitButton.click();
+            }
+    });
+
+ input.focus();
+
+ chatSocket.onopen = function(event) {
+    console.log('WebSocket connection opened:', event);
+};
+
+chatSocket.onclose = function(event) {
+    console.log('WebSocket connection closed:', event);
+};
+    
+
+</script>
+{% endblock %}

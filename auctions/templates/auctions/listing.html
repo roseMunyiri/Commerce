@@ -29,6 +29,7 @@
                 <h6>Initial Price:${{listing.price}}</h6>
                 <h6>Category: {{listing.category}}</h6>
                 <a href="{% url 'listing' id=listing.id %}" class="btn btn-primary">Details</a>
+                <a href="{% url 'chat' id=listing.id %}" class="btn btn-primary">message</a>
                 </div>
             </div>
 
@@ -58,3 +59,4 @@
 
 
 {% endblock %}
+

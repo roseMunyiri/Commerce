@@ -40,5 +40,14 @@ class Comments(models.Model):
 
     def __str__(self):
         return f"{self.author} commented on {self.listing}"
+
+class Messages(models.Model):
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sent_messages")
+    message = models.TextField(null=True, blank=True)
+    thread_name = models.CharField(max_length=300)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.sender} to {self.thread_name}: {self.message} at {self.timestamp}"
     
 

@@ -14,7 +14,8 @@ urlpatterns = [
     path("add/<int:id>", views.addWatchlist, name="add"),
     path("watchlist", views.watchlist, name="watchlist"),
     path("comment/<int:id>", views.addComment, name="comment"),
-    path("addBid/<int:id>", views.addBid, name="addBid")
+    path("addBid/<int:id>", views.addBid, name="addBid"),
+    path('chat/<int:id>/', views.chat, name='chat'),
 
 
 

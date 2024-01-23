@@ -33,13 +33,16 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'auctions.apps.AuctionsConfig',
+    'daphne',
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'auctions.apps.AuctionsConfig',
+
 ]
 
 MIDDLEWARE = [
@@ -71,6 +74,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'commerce.wsgi.application'
+ASGI_APPLICATION = 'commerce.asgi.application'
 
 
 # Database
@@ -83,6 +87,14 @@ DATABASES = {
     }
 }
 
+CHANNEL_LAYERS = {
+ 'default': {
+    'BACKEND': 'channels_redis.core.RedisChannelLayer',
+    'CONFIG': {
+                 'hosts': [('127.0.0.1', 6379)],
+             },
+    },
+}
 AUTH_USER_MODEL = 'auctions.User'
 
 # Password validation
@@ -122,3 +134,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
